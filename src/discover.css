@@ -1,0 +1,673 @@
+.discover-page {
+  background: #f8f9fa;
+  color: #182532;
+  min-height: 100vh;
+  font-family: Inter, Arial, sans-serif;
+}
+.discover-page * {
+  box-sizing: border-box;
+}
+.discover-page h1,
+.discover-page h2,
+.discover-page h3 {
+  font-family: "Plus Jakarta Sans", Arial, sans-serif;
+}
+.discover-header {
+  height: 60px;
+  background: #fff;
+  position: relative;
+  z-index: 5;
+}
+.discover-header-inner {
+  max-width: 1120px;
+  margin: auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+.discover-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  font:
+    800 19px "Plus Jakarta Sans",
+    Arial,
+    sans-serif;
+  color: #1b4332;
+}
+.discover-brand span {
+  height: 33px;
+  width: 33px;
+  background: #1b4332;
+  color: #fff;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+}
+.discover-header nav {
+  display: flex;
+  gap: 27px;
+  align-items: center;
+}
+.discover-header nav .discover-sign-in{background:#1b4332;color:#fff;border-radius:999px;padding:9px 16px;white-space:nowrap}.discover-header nav .discover-sign-in:hover{background:#2d6a4f;color:#fff}
+@media(max-width:480px){.discover-header nav a{display:none}.discover-header nav{gap:8px}.discover-header nav .discover-sign-in{padding:8px 12px}}
+.discover-header nav a,
+.discover-header nav button {
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 0;
+  background: none;
+  color: #1d2939;
+  padding: 9px 0;
+}
+.discover-header nav a:hover,
+.discover-header nav button:hover {
+  color: #c2410c;
+}
+.discover-hero {
+  height: 457px;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+}
+.discover-hero > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+}
+.discover-tint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(19, 66, 45, 0.96), rgba(12, 46, 36, 0.77));
+}
+.discover-hero-inner {
+  position: absolute;
+  top: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100% - 32px, 1120px);
+}
+.discover-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 40px;
+  background: #ffffff28;
+  padding: 5px 13px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.discover-hero h1 {
+  color: white;
+  font-size: 58px;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  margin: 25px 0 16px;
+  font-weight: 800;
+  max-width: 700px;
+}
+.discover-hero p {
+  font-size: 18px;
+  line-height: 1.55;
+  max-width: 660px;
+  color: #eef5ef;
+}
+.discover-main {
+  max-width: 1120px;
+  margin: auto;
+  padding: 0 16px;
+}
+.discover-search {
+  background: #fff;
+  position: relative;
+  margin-top: -48px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  box-shadow: 0 8px 18px #1e30231a;
+  z-index: 2;
+}
+.discover-fields {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 148px;
+  gap: 12px;
+  align-items: end;
+}
+.discover-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.discover-fields label > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #718093;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.discover-fields input,
+.discover-fields select {
+  height: 48px;
+  border: 1px solid #d3d9dd;
+  border-radius: 11px;
+  padding: 0 13px;
+  font-size: 16px;
+  color: #28313b;
+  background: #fff;
+  width: 100%;
+}
+.discover-fields input::placeholder {
+  color: #9aa0a5;
+}
+.discover-find {
+  height: 48px;
+  border: 0;
+  border-radius: 10px;
+  background: #c2410c;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14px;
+}
+.discover-find:hover {
+  background: #9a3412;
+}
+.discover-height {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.discover-height span {
+  font-size: 12px;
+  color: #778396;
+  font-weight: 700;
+}
+.discover-height button {
+  border: 1px solid #d3dae1;
+  background: white;
+  border-radius: 30px;
+  padding: 8px 13px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #3e4853;
+}
+.discover-height button.active {
+  border-color: #1b4332;
+  background: #e5f3eb;
+  color: #1b4332;
+}
+.discover-trust {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 17px;
+  padding-top: 16px;
+}
+.discover-trust > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.discover-trust > div span {
+  background: #c1ecd4;
+  color: #1b4332;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.discover-trails {
+  padding-top: 58px;
+}
+.discover-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 30px;
+  margin-bottom: 28px;
+}
+.discover-section-heading span {
+  display: block;
+  color: #c2410c;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.discover-section-heading h2 {
+  font-size: 30px;
+  color: #121e2b;
+  letter-spacing: -0.035em;
+}
+.discover-section-heading p {
+  font-size: 14px;
+  color: #728093;
+  max-width: 450px;
+  line-height: 1.5;
+}
+.discover-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.discover-card {
+  background: #fff;
+  border: 1px solid #dce3e8;
+  border-radius: 16px;
+  overflow: hidden;
+  min-width: 0;
+}
+.discover-card-image {
+  height: 193px;
+  position: relative;
+  overflow: hidden;
+  background: #1b4332;
+}
+.discover-card-image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.discover-card-image:after {
+  content: "";
+  position: absolute;
+  inset: 55% 0 0;
+  background: linear-gradient(transparent, #061810bf);
+}
+.discover-card-image .elevation,
+.discover-card-image .difficulty {
+  position: absolute;
+  top: 12px;
+  z-index: 1;
+  border-radius: 30px;
+  background: #fff;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.discover-card-image .elevation {
+  left: 12px;
+  color: #c2410c;
+}
+.discover-card-image .difficulty {
+  right: 12px;
+}
+.discover-card-image .difficulty.minor {
+  background: #c1ecd4;
+  color: #1b4332;
+}
+.discover-card-image .difficulty.moderate {
+  background: #fef3c7;
+  color: #9a520d;
+}
+.discover-card-image .difficulty.major {
+  background: #edf1f3;
+  color: #a74222;
+}
+.discover-card-image > strong {
+  position: absolute;
+  bottom: 15px;
+  left: 13px;
+  color: #fff;
+  z-index: 1;
+  font-size: 14px;
+}
+.discover-card-body {
+  padding: 20px;
+}
+.discover-card-body h3 {
+  font-size: 18px;
+  line-height: 1.3;
+  color: #172332;
+  margin-bottom: 8px;
+}
+.discover-card-body > p {
+  font-size: 15px;
+  line-height: 1.45;
+  height: 44px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.discover-card-footer {
+  border-top: 1px solid #e2e6e9;
+  padding-top: 15px;
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+.discover-card-footer > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #8290a0;
+}
+.discover-card-footer button {
+  border: 0;
+  background: none;
+  color: #1b4332;
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.discover-card-footer button span {
+  font-size: 17px;
+}
+.discover-empty {
+  text-align: center;
+  padding: 50px 20px;
+}
+.discover-empty h3 {
+  font-size: 20px;
+}
+.discover-empty p {
+  color: #6b7885;
+  margin: 10px;
+}
+.discover-empty button {
+  border: 1px solid #d3d9dd;
+  background: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+}
+.discover-operator {
+  margin: 65px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #e8f1e9;
+  padding: 28px;
+  border-radius: 14px;
+}
+.discover-operator h2 {
+  font-size: 23px;
+}
+.discover-operator p {
+  color: #56695e;
+  font-size: 14px;
+  margin-top: 5px;
+}
+.discover-operator button {
+  background: #1b4332;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  padding: 13px 17px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.discover-footer {
+  border-top: 1px solid #dfe6e4;
+  max-width: 1120px;
+  margin: auto;
+  padding: 25px 16px;
+  color: #1b4332;
+  font-weight: 800;
+  display: flex;
+  justify-content: space-between;
+}
+.discover-footer span {
+  font-weight: 400;
+  color: #7c8a82;
+  font-size: 13px;
+}
+.discover-dialog {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  background: transparent;
+  z-index: 30;
+}
+.discover-dialog-shade {
+  position: absolute;
+  inset: 0;
+  background: #082418bd;
+}
+.discover-dialog-content {
+  position: relative;
+  background: white;
+  width: min(560px, calc(100vw - 32px));
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 14px;
+  margin: 5vh auto;
+  box-shadow: 0 30px 90px #08241840;
+}
+.discover-dialog-content > img {
+  width: 100%;
+  height: 225px;
+  object-fit: cover;
+}
+.discover-dialog-content > div {
+  padding: 24px;
+}
+.discover-dialog-content h2 {
+  font-size: 28px;
+  margin: 9px 0;
+}
+.discover-dialog-content p {
+  font-size: 15px;
+  color: #4b5a53;
+  margin: 10px 0;
+}
+.discover-dialog-content p svg {
+  vertical-align: middle;
+}
+.discover-dialog-grade {
+  font-size: 12px;
+  color: #c2410c;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.discover-dialog-content h3 {
+  font-size: 17px;
+  margin: 23px 0 12px;
+}
+.discover-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: 0;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+}
+.discover-departure {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #dce3de;
+  background: white;
+  padding: 12px;
+  text-align: left;
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
+.discover-departure small {
+  display: block;
+  color: #79867c;
+  margin-top: 3px;
+}
+@media (max-width: 850px) {
+  .discover-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .discover-find {
+    grid-column: span 2;
+  }
+  .discover-trust {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .discover-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .discover-hero h1 {
+    font-size: 48px;
+  }
+  .discover-section-heading p {
+    max-width: 300px;
+  }
+}
+@media (max-width: 600px) {
+  .discover-header {
+    height: 60px;
+  }
+  .discover-header nav {
+    gap: 15px;
+  }
+  .discover-header nav a,
+  .discover-header nav button {
+    font-size: 12px;
+  }
+  .discover-brand {
+    font-size: 16px;
+  }
+  .discover-brand span {
+    height: 30px;
+    width: 30px;
+  }
+  .discover-hero {
+    height: 450px;
+  }
+  .discover-hero-inner {
+    top: 70px;
+  }
+  .discover-hero h1 {
+    font-size: 41px;
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+  }
+  .discover-hero p {
+    font-size: 16px;
+  }
+  .discover-hero-tag {
+    font-size: 10px;
+  }
+  .discover-search {
+    margin-top: -50px;
+    padding: 15px;
+    border-radius: 16px;
+  }
+  .discover-fields {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .discover-fields label:first-child {
+    grid-column: span 2;
+  }
+  .discover-fields input,
+  .discover-fields select {
+    font-size: 15px;
+  }
+  .discover-fields label > span {
+    font-size: 10px;
+  }
+  .discover-find {
+    grid-column: span 2;
+  }
+  .discover-height {
+    gap: 5px;
+  }
+  .discover-height span {
+    flex-basis: 100%;
+  }
+  .discover-height button {
+    font-size: 11px;
+    padding: 7px 9px;
+  }
+  .discover-trust {
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .discover-trust > div {
+    font-size: 11px;
+    white-space: normal;
+    line-height: 1.3;
+  }
+  .discover-trust > div span {
+    width: 28px;
+    height: 28px;
+  }
+  .discover-trails {
+    padding-top: 45px;
+  }
+  .discover-section-heading {
+    display: block;
+    margin-bottom: 20px;
+  }
+  .discover-section-heading h2 {
+    font-size: 27px;
+  }
+  .discover-section-heading p {
+    margin-top: 12px;
+    max-width: none;
+  }
+  .discover-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .discover-card-image {
+    height: 205px;
+  }
+  .discover-operator {
+    display: block;
+    margin: 45px 0;
+    padding: 23px;
+  }
+  .discover-operator button {
+    margin-top: 18px;
+    white-space: normal;
+  }
+  .discover-footer {
+    display: block;
+  }
+  .discover-footer span {
+    display: block;
+    margin-top: 5px;
+  }
+}
+.discover-card-placeholder,
+.discover-dialog-placeholder {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #85a99a;
+  background: linear-gradient(145deg, #2c7557, #0c3225);
+}
+.discover-dialog-placeholder {
+  height: 225px;
+}
