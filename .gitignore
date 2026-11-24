@@ -1,8 +1,2 @@
-node_modules/
-dist/
-.env
-*.log
-output/
 FILES/
 code-server-screenshot.png
-scripts/replace-ui.py
