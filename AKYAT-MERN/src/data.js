@@ -2,9 +2,9 @@ export const trails = [
   {
     name: "Mt. Pulag",
     route: "Ambangeg trail",
-    location: "Benguet",
-    difficulty: "Moderate",
-    elevation: "2,926",
+    location: "Bokod, Benguet",
+    difficulty: "Minor 3/9",
+    elevation: "2,922",
     image: "mt-pulag-ambangeg.jpg",
     description:
       "Walk above the clouds on Luzon’s highest peak. Mossy forests open into rolling grasslands and an unforgettable summit sunrise.",
@@ -13,7 +13,7 @@ export const trails = [
     name: "Mt. Ulap",
     route: "Eco-trail traverse",
     location: "Itogon, Benguet",
-    difficulty: "Easy",
+    difficulty: "Minor 3/9",
     elevation: "1,846",
     image: "mt-ulap.jpg",
     description:
@@ -22,8 +22,8 @@ export const trails = [
   {
     name: "Mt. Ugo",
     route: "Kayapa–Itogon traverse",
-    location: "Nueva Vizcaya",
-    difficulty: "Challenging",
+    location: "Itogon, Benguet",
+    difficulty: "Moderate 5/9",
     elevation: "2,150",
     image: "mt-ugo-traverse.jpg",
     description:
@@ -33,19 +33,29 @@ export const trails = [
     name: "Mt. Pulag",
     route: "Akiki trail",
     location: "Kabayan, Benguet",
-    difficulty: "Challenging",
-    elevation: "2,926",
+    difficulty: "Major 7/9",
+    elevation: "2,922",
     image: "mt-pulag-akiki.jpg",
     description:
       "A demanding ascent through steep pine slopes and mossy forest, rewarding experienced hikers with a high-altitude adventure.",
   },
 ];
+const isoDate = (d) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+/** Today's date in the browser's time zone, as YYYY-MM-DD. */
+export const todayISO = () => isoDate(new Date());
+const daysFromToday = (days) => {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return isoDate(d);
+};
+// Demo departures are dated relative to today so the sample schedule never goes stale.
 export const seedTrips = [
   {
     id: "demo-1",
     title: "Pulag sunrise escape",
     trail: 0,
-    date: "2026-12-05",
+    date: daysFromToday(10),
     duration: "2 days / 1 night",
     price: 4500,
     capacity: 20,
@@ -58,7 +68,7 @@ export const seedTrips = [
     id: "demo-2",
     title: "A day above the pines",
     trail: 1,
-    date: "2026-12-12",
+    date: daysFromToday(17),
     duration: "Day hike",
     price: 1800,
     capacity: 15,
@@ -72,7 +82,7 @@ export const seedTrips = [
     id: "demo-3",
     title: "The Ugo weekend traverse",
     trail: 2,
-    date: "2026-12-19",
+    date: daysFromToday(24),
     duration: "2 days / 1 night",
     price: 3800,
     capacity: 12,
@@ -85,7 +95,7 @@ export const seedTrips = [
     id: "demo-4",
     title: "Pulag via the road less taken",
     trail: 3,
-    date: "2027-01-09",
+    date: daysFromToday(45),
     duration: "3 days / 2 nights",
     price: 5800,
     capacity: 10,
@@ -98,7 +108,7 @@ export const seedTrips = [
     id: "demo-5",
     title: "Ulap slow Sunday",
     trail: 1,
-    date: "2027-01-17",
+    date: daysFromToday(53),
     duration: "Day hike",
     price: 1800,
     capacity: 18,

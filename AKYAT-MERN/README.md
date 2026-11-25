@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5180. The discovery page is public. **For operators** opens login/signup; MongoDB and the API server must be running to use the protected workspace. A signed-in browser tab keeps its session across reloads. The standalone demo data remains in the browser for the activity's demo mode.
+Open http://127.0.0.1:5180 (use this address, not `localhost`: reset links and Google sign-in return to `127.0.0.1`, and a signed-in session belongs to the address it was created on). The discovery page is public. **For operators** opens login/signup; MongoDB and the API server must be running to use the protected workspace. A signed-in browser tab keeps its session across reloads. The standalone demo data remains in the browser for the activity's demo mode.
 
 ## Connect MongoDB
 
@@ -78,9 +78,9 @@ npm test
 npm run build
 ```
 
-Verified during implementation: production build and six validation/auth unit tests. The earlier discovery and workspace UI were browser checked before the authentication change; the new login/signup flow still needs a live MongoDB run.
+Verified on 2026-11-25 against a local MongoDB instance: six unit tests, a production build, every API endpoint in the Postman list above (including the 401, 403, 404, and validation errors, and one account being unable to read, edit, or delete another account's trips), and the UI flow of signup, trip creation, reload, and Discover showing the new departure.
 
-MongoDB persistence and the new authentication endpoints have not been integration-tested because no MongoDB service was running on the development machine. To verify them, follow the Postman steps above with MongoDB connected, then repeat signup, login, trip creation, editing, reload, and deletion in the UI.
+Google sign-in has not been tested end to end because it needs your own OAuth client credentials in `.env`.
 
 ## Activity evidence
 

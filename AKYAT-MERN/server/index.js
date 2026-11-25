@@ -159,7 +159,8 @@ app.post("/api/auth/logout", requireAuth, async (req, res) => {
   res.status(204).end();
 });
 const serialize = (trip) => {
-  const { _id, __v, ...data } = trip.toObject();
+  // `owner` is select:false on reads, but create() returns it; drop it so every response matches.
+  const { _id, __v, owner, ...data } = trip.toObject();
   return { ...data, id: String(_id) };
 };
 app.param("id", (req, res, next, id) =>

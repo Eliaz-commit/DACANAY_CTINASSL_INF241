@@ -23,7 +23,7 @@ import {
   Tent,
   Menu,
 } from "lucide-react";
-import { trails, seedTrips, currency, dateLabel, tripStatus } from "./data";
+import { trails, seedTrips, currency, dateLabel, tripStatus, todayISO } from "./data";
 import { validateTrip } from "../server/validation.js";
 import "./styles.css";
 import { WorkspaceContent } from "./WorkspaceContent";
@@ -33,6 +33,9 @@ import "./redesign.css";
 
 const STORE = "akyat-activity-trips-v1";
 const TOKEN_STORE = "akyat-activity-session";
+// "Maria Santos" -> "MS"; falls back to the brand initials when signed out.
+const initials = (name) =>
+  (name || "Akyat PH").trim().split(/\s+/).slice(0, 2).map((part) => part[0].toUpperCase()).join("");
 const Icon = ({ icon: Component, ...props }) => (
   <Component size={19} strokeWidth={1.7} aria-hidden="true" {...props} />
 );
@@ -76,10 +79,12 @@ async function api(path = "", options = {}) {
   });
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
-    throw new Error(
+    const error = new Error(
       body.error ||
         "The database could not be reached. Start the API server and check its MongoDB connection.",
     );
+    error.status = response.status;
+    throw error;
   }
   return response.status === 204 ? null : response.json();
 }
@@ -333,6 +338,14 @@ function App() {
       });
   }, []);
   useEffect(() => {
+    document.title =
+      siteView === "auth"
+        ? "Sign in · AkyatPH"
+        : siteView === "operator"
+          ? "Operator workspace · AkyatPH"
+          : "Discover trails · AkyatPH";
+  }, [siteView]);
+  useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => setToast(""), 5000);
     return () => clearTimeout(timer);
@@ -340,6 +353,17 @@ function App() {
   function open(value) {
     setError("");
     setModal(value);
+  }
+  // The server rejected the token (expired, or logged out elsewhere): sign out and ask to sign in again.
+  function expireSession(message) {
+    sessionStorage.removeItem(TOKEN_STORE);
+    setUser(null);
+    setMode("demo");
+    setTrips(loadDemo());
+    setModal(null);
+    setAuthNotice("");
+    setError(message || "Session expired. Sign in again.");
+    setSiteView("auth");
   }
   function close() {
     if (!busy) setModal(null);
@@ -381,7 +405,8 @@ function App() {
       setModal(null);
       setToast(editing ? "Trip updated." : "Trip created.");
     } catch (e) {
-      setError(e.message);
+      if (e.status === 401) expireSession(e.message);
+      else setError(e.message);
     } finally {
       setBusy(false);
     }
@@ -395,7 +420,8 @@ function App() {
       setModal(null);
       setToast("Trip deleted.");
     } catch (e) {
-      setError(e.message);
+      if (e.status === 401) expireSession(e.message);
+      else setError(e.message);
     } finally {
       setBusy(false);
     }
@@ -410,7 +436,8 @@ function App() {
       setModal(null);
       setToast("Connected to MongoDB.");
     } catch (e) {
-      setError(e.message);
+      if (e.status === 401) expireSession(e.message);
+      else setError(e.message);
     } finally {
       setBusy(false);
     }
@@ -492,8 +519,7 @@ function App() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     setToast("Trip list exported.");
   }
-  const now = new Date();
-  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const today = todayISO();
   const active = trips.filter((t) => t.status === "Open" && t.date >= today);
   const totalSeats = active.reduce((n, t) => n + t.capacity, 0);
   const reserved = active.reduce((n, t) => n + t.booked, 0);
@@ -574,7 +600,7 @@ function App() {
             Workspace guide
           </button>
           <div className="profile">
-            <div className="avatar">AP</div>
+            <div className="avatar" aria-hidden="true">{initials(user?.name)}</div>
             <div>
               <strong>{user?.name || "AKYAT PH"}</strong>
               <small>{user?.email || "Activity workspace"}</small>

@@ -9,7 +9,7 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import { trails, currency, dateLabel, tripStatus } from "./data";
+import { trails, currency, dateLabel, tripStatus, todayISO } from "./data";
 
 export function WorkspaceContent({
   page,
@@ -28,8 +28,7 @@ export function WorkspaceContent({
 }) {
   const [selectedId, setSelectedId] = useState(null);
   const selected = filtered.find((t) => t.id === selectedId) || filtered[0] || null;
-  const current = new Date();
-  const today = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, "0")}-${String(current.getDate()).padStart(2, "0")}`;
+  const today = todayISO();
   const upcoming = trips.filter((t) => t.date >= today && t.status !== "Cancelled");
   const openSeats = upcoming.reduce(
     (sum, t) => sum + (t.status === "Open" ? t.capacity - t.booked : 0),
@@ -181,7 +180,18 @@ export function WorkspaceContent({
                   })}
                 </section>
               ))}
-              {filtered.length === 0 && (
+              {trips.length === 0 && (
+                <div className="records-empty">
+                  <Compass size={30} />
+                  <h2>No trips yet</h2>
+                  <p>Create your first departure and it will appear here.</p>
+                  <button className="button primary" onClick={() => open({ type: "create" })}>
+                    <Plus size={17} />
+                    Create trip
+                  </button>
+                </div>
+              )}
+              {trips.length > 0 && filtered.length === 0 && (
                 <div className="records-empty">
                   <Compass size={30} />
                   <h2>No matching trips</h2>

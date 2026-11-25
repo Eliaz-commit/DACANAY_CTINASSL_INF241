@@ -10,7 +10,7 @@ import {
   Ticket,
   X,
 } from "lucide-react";
-import { trails, currency, dateLabel, tripStatus } from "./data";
+import { trails, currency, dateLabel, tripStatus, todayISO } from "./data";
 import "./discover.css";
 
 const catalog = [
@@ -101,10 +101,13 @@ export function Discover({ trips, onOperator, onSignIn, onTrip, user }) {
       (!difficulty || t.band === difficulty) &&
       (!height || (t.height >= heights[height][0] && t.height < heights[height][1])),
   );
-  const tripFor = (index) =>
+  const today = todayISO();
+  // Hikers only see open departures that haven't happened yet, soonest first.
+  const upcomingFor = (index) =>
     trips
-      .filter((t) => t.trail === index && t.status === "Open")
-      .sort((a, b) => a.date.localeCompare(b.date))[0];
+      .filter((t) => t.trail === index && t.status === "Open" && t.date >= today)
+      .sort((a, b) => a.date.localeCompare(b.date));
+  const tripFor = (index) => upcomingFor(index)[0];
   return (
     <div className="discover-page">
       <header className="discover-header">
@@ -333,9 +336,7 @@ export function Discover({ trips, onOperator, onSignIn, onTrip, user }) {
               </p>
               <p>{selected.description}</p>
               <h3>Scheduled trips</h3>
-              {trips
-                .filter((t) => t.trail === selected.trail && t.status === "Open")
-                .map((t) => (
+              {upcomingFor(selected.trail).map((t) => (
                   <button className="discover-departure" key={t.id} onClick={() => onTrip(t)}>
                     <span>
                       <strong>{dateLabel(t.date)}</strong>
