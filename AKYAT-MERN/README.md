@@ -30,11 +30,14 @@ The discovery screen copies the capstone's presentation and trust copy as a UI r
 ## Screens and actions
 
 - **Discover:** destination, province, difficulty, and summit-height filters; six trail cards matching the capstone catalog; trail details and available demo departures. The two trails without local photos use a green placeholder.
-- **Operator workspace:** open it through **For operators**; departures grouped by month, open seats, drafts, search, status filters, sorting, and CSV export. Select a departure to inspect its details beside the list.
-- **Trail library:** four sample Cordillera routes; start a trip with a trail preselected.
-- **Create / edit:** trip name, trail, date, duration, price, group capacity, reserved seats, status, meeting point, and notes.
-- **Details / delete:** inspect the trip, edit it, or confirm permanent deletion. Trips with reserved seats show an additional warning.
-- **Responsive layout:** the trip inspector stacks beneath the schedule on phones, with the same two-section navigation available at every width.
+- **Operator portal:** opens after sign-in through **For operators**. It follows the capstone's `/operator` dashboard: a sidebar with the operator card, **New Expedition**, and Overview / Expeditions / Trails navigation (a scrolling top bar on phones).
+- **Overview:** a greeting, four stat cards (upcoming expeditions, seats booked this month, drafts to publish, bookings value this month), the upcoming expeditions table with All / This weekend / Needs action tabs, an action queue, and the workspace data card for switching between MongoDB and demo data.
+- **Expeditions:** every trip with Upcoming / Drafts / Past / Cancelled / All tabs, search, sorting by date or price, and CSV export.
+- **Expedition page:** trail photo and facts, operator notes, seats, pricing, and meeting point. Edit it, publish a draft, cancel an open trip, move a cancelled one back to drafts, or delete it after a confirmation.
+- **Create / edit:** the capstone's three-step form (trail, schedule and seats, meeting point and notes) beside a live hiker preview and a checklist. **Publish expedition** saves it as Open; **Save draft** keeps it a Draft.
+- **Trails:** the four Cordillera routes with their height, difficulty, and photo; **Plan this route** starts a new expedition with the trail filled in.
+
+The UI says "expedition" like the capstone; the API and database still call them trips. "Full" and "Completed" are worked out from seats and dates, not stored.
 
 ## API and database
 
@@ -84,4 +87,4 @@ Google sign-in has not been tested end to end because it needs your own OAuth cl
 
 ## Activity evidence
 
-UI preview images are saved locally in `output/akyat-activity` and are excluded from Git. These are browser captures, not the full-desktop evidence requested in the assignment. For the final submission, capture your entire desktop while showing Overview, Trips, Explore trails, the create/edit forms, trip details, and deletion confirmation. Place those captures in the provided activity template. Database screenshots should use an actual connected database, not demo mode. The submission template and PDF are not included in this UI deliverable.
+UI preview images are saved locally in `output/akyat-activity` and are excluded from Git. These are browser captures, not the full-desktop evidence requested in the assignment. For the final submission, capture your entire desktop while showing Overview, Expeditions, Trails, the create and edit form, an expedition page, and the delete confirmation. Place those captures in the provided activity template. Database screenshots should use an actual connected database, not demo mode. The submission template and PDF are not included in this UI deliverable.
