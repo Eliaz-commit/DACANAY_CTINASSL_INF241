@@ -1657,3 +1657,74 @@ textarea.op-input {
     transform: none;
   }
 }
+
+/* ── Live bookings and manifest ─────────────────────────────────────────── */
+
+.op-feed li + li {
+  border-top: 1px solid var(--color-line);
+}
+
+.op-feed button {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 20px;
+  border: 0;
+  background: none;
+  text-align: left;
+  transition: background-color 160ms var(--ease-out);
+}
+
+.op-feed button:hover {
+  background: var(--color-surface);
+}
+
+.op-feed-text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  color: var(--color-body);
+}
+
+.op-feed-text strong {
+  color: var(--color-ink);
+}
+
+.op-feed-text small {
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--color-muted);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.op-feed-side {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.op-manifest tbody tr:hover {
+  background: none;
+}
+
+.op-manifest tr.muted td {
+  opacity: 0.55;
+}
+
+.op-manifest td:first-child {
+  min-width: 180px;
+}
+
+.op-wrap {
+  max-width: 260px;
+  white-space: normal;
+}

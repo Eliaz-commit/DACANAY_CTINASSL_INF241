@@ -69,11 +69,11 @@ function thisWeekend(today) {
   return [saturday, addDays(saturday, 1)];
 }
 
-const trailName = (trail) => `${trail.name} via ${trail.route.replace(/ trail$/i, "")}`;
+export const trailName = (trail) => `${trail.name} via ${trail.route.replace(/ trail$/i, "")}`;
 
 // ── Small pieces ───────────────────────────────────────────────────────────────
 
-function Pill({ tone, children }) {
+export function Pill({ tone, children }) {
   return <span className={`op-pill ${tone}`}>{children}</span>;
 }
 
@@ -85,7 +85,7 @@ function StatusPill({ trip, today }) {
   return <Pill tone="neutral">{status}</Pill>;
 }
 
-function Difficulty({ level }) {
+export function Difficulty({ level }) {
   const band = difficultyBand(level);
   return (
     <span className={`op-difficulty ${band}`}>
@@ -94,11 +94,11 @@ function Difficulty({ level }) {
   );
 }
 
-function Masl({ masl, variant = "" }) {
+export function Masl({ masl, variant = "" }) {
   return <span className={`op-masl ${variant}`}>▲ {masl.toLocaleString("en-PH")} MASL</span>;
 }
 
-function Meter({ value, max, tone = "" }) {
+export function Meter({ value, max, tone = "" }) {
   const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0;
   return (
     <div className={`op-meter ${tone}`} role="meter" aria-valuemin={0} aria-valuemax={max} aria-valuenow={value}>
@@ -107,7 +107,7 @@ function Meter({ value, max, tone = "" }) {
   );
 }
 
-function EmptyState({ title, children, action }) {
+export function EmptyState({ title, children, action }) {
   return (
     <div className="op-empty">
       <p className="op-empty-title">{title}</p>
@@ -126,7 +126,7 @@ function LiveBadge({ mode }) {
   );
 }
 
-function Dialog({ title, onClose, busy, children, footer }) {
+export function Dialog({ title, onClose, busy, children, footer }) {
   const ref = useRef(null);
   useEffect(() => {
     const dialog = ref.current;
@@ -399,8 +399,8 @@ function buildQueue(upcoming, today) {
         id: e.id,
         urgent: days <= 3,
         icon: Users,
-        eyebrow: `${when} · No reservations`,
-        title: "No hikers reserved yet",
+        eyebrow: `${when} · No bookings`,
+        title: "No hikers have booked yet",
         detail: `${trip}. Check the date and price, or share the trip.`,
         cta: "Open expedition",
         days,
@@ -410,7 +410,63 @@ function buildQueue(upcoming, today) {
   return items.sort((a, b) => Number(b.urgent) - Number(a.urgent) || a.days - b.days);
 }
 
-function Overview({ trips, user, mode, navigate, onConnect, onUseDemo, busy, error }) {
+function timeAgo(timestamp, now = Date.now()) {
+  const minutes = Math.max(0, Math.round((now - Date.parse(timestamp)) / 60000));
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} h ago`;
+  return dateLabel(new Date(timestamp).toISOString().slice(0, 10));
+}
+
+/** How a booking reads to the operator. */
+function BookingPill({ booking }) {
+  if (booking.status === "Confirmed") return <Pill tone="success">Confirmed</Pill>;
+  return <Pill tone="neutral">{booking.cancelledBy === "hiker" ? "Cancelled by hiker" : "Cancelled"}</Pill>;
+}
+
+// Capstone: RecentBookings on app/operator/page.tsx.
+function LiveBookings({ recent, mode, navigate }) {
+  return (
+    <section className="op-card">
+      <div className="op-card-head ruled">
+        <h2>Live bookings</h2>
+        {mode === "database" && <span className="op-eyebrow">Updates every 10 s</span>}
+      </div>
+      {mode === "demo" ? (
+        <p className="op-quiet">Connect MongoDB to see hikers' bookings as they land.</p>
+      ) : recent.length === 0 ? (
+        <div style={{ padding: 16 }}>
+          <EmptyState title="No bookings yet">New bookings appear here as hikers book from Discover.</EmptyState>
+        </div>
+      ) : (
+        <ul className="op-feed">
+          {recent.map((b) => (
+            <li key={b.id}>
+              <button type="button" onClick={() => b.trip && navigate({ page: "expedition", id: b.trip.id })}>
+                <span className="op-avatar soft">{initials(b.bookedBy?.name ?? "?")}</span>
+                <span className="op-feed-text">
+                  <span>
+                    <strong>{b.bookedBy?.name ?? "A hiker"}</strong> booked {plural(b.seats, "seat")}
+                  </span>
+                  <small>
+                    {b.trip?.title ?? "Removed trip"} · {currency(b.total)}
+                  </small>
+                </span>
+                <span className="op-feed-side">
+                  <small>{timeAgo(b.createdAt)}</small>
+                  <BookingPill booking={b} />
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function Overview({ trips, recent = [], user, mode, navigate, onConnect, onUseDemo, busy, error }) {
   const now = new Date();
   const today = todayISO();
   const month = today.slice(0, 7);
@@ -510,7 +566,7 @@ function Overview({ trips, user, mode, navigate, onConnect, onUseDemo, busy, err
             <p className="op-eyebrow">Bookings value ({monthShort})</p>
             <p className="op-stat-num">{currency(reservedValue)}</p>
             <p className="op-stat-note">
-              From {plural(seatsTaken, "reserved seat")} on {monthName} trips
+              From {plural(seatsTaken, "booked seat")} on {monthName} trips
             </p>
           </section>
         </div>
@@ -584,6 +640,8 @@ function Overview({ trips, user, mode, navigate, onConnect, onUseDemo, busy, err
                 </ul>
               )}
             </section>
+
+            <LiveBookings recent={recent} mode={mode} navigate={navigate} />
 
             <section className="op-card">
               <div className="op-card-head ruled">
@@ -725,7 +783,87 @@ function Expeditions({ trips, navigate, initialTab, onExport }) {
 
 // ── One expedition (capstone: app/operator/expeditions/[id]/page.tsx) ────────────────
 
-function ExpeditionDetail({ trip, mode, navigate, onStatus, onDelete, busy, error, clearError }) {
+function Manifest({ trip, mode, loadManifest }) {
+  const [state, setState] = useState({ loading: true, bookings: [], error: "" });
+  // Reload when the seat count or status changes, so new and cancelled bookings show up.
+  useEffect(() => {
+    if (mode !== "database") return;
+    let live = true;
+    loadManifest(trip.id)
+      .then((bookings) => live && setState({ loading: false, bookings, error: "" }))
+      .catch((e) => live && setState({ loading: false, bookings: [], error: e.message }));
+    return () => {
+      live = false;
+    };
+  }, [trip.id, trip.booked, trip.status, mode]);
+  const confirmed = state.bookings.filter((b) => b.status === "Confirmed");
+  const hikers = confirmed.reduce((n, b) => n + b.seats, 0);
+
+  return (
+    <section className="op-card" id="manifest">
+      <div className="op-card-head">
+        <div>
+          <h2>Manifest</h2>
+          <p>
+            {mode === "demo"
+              ? "Hikers' bookings appear here when you're connected to MongoDB."
+              : `${plural(hikers, "hiker")} on ${plural(confirmed.length, "booking")}. Names are as each hiker entered them.`}
+          </p>
+        </div>
+      </div>
+      {mode === "demo" ? (
+        <div className="op-table-empty">
+          <EmptyState title="Demo data has no bookings" />
+        </div>
+      ) : state.error ? (
+        <p className="op-form-error" role="alert" style={{ margin: 20 }}>
+          {state.error}
+        </p>
+      ) : state.bookings.length === 0 ? (
+        <div className="op-table-empty">
+          <EmptyState title={state.loading ? "Loading bookings…" : "No bookings yet"}>
+            {!state.loading && "When hikers book this trip from Discover, they show up here."}
+          </EmptyState>
+        </div>
+      ) : (
+        <div className="op-table-wrap" style={{ marginTop: 12 }}>
+          <table className="op-table op-manifest">
+            <thead>
+              <tr>
+                <th>Booked by</th>
+                <th>Hikers</th>
+                <th>Reference</th>
+                <th>Booked</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.bookings.map((b) => (
+                <tr key={b.id} className={b.status === "Cancelled" ? "muted" : ""}>
+                  <td>
+                    <p className="op-cell-strong">{b.bookedBy?.name ?? "Deleted account"}</p>
+                    <p className="op-cell-sub">{b.bookedBy?.email}</p>
+                  </td>
+                  <td>
+                    <p className="op-cell-strong">{plural(b.seats, "seat")}</p>
+                    <p className="op-cell-sub op-wrap">{b.hikers.join(", ")}</p>
+                  </td>
+                  <td className="op-cell-sub">{b.reference}</td>
+                  <td className="op-cell-sub">{timeAgo(b.createdAt)}</td>
+                  <td>
+                    <BookingPill booking={b} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function ExpeditionDetail({ trip, mode, navigate, onStatus, onDelete, loadManifest, busy, error, clearError }) {
   const [confirm, setConfirm] = useState(null);
   const today = todayISO();
   if (!trip) {
@@ -836,6 +974,8 @@ function ExpeditionDetail({ trip, mode, navigate, onStatus, onDelete, busy, erro
         )}
 
         <div className="op-detail-grid">
+          <div className="op-side">
+          <Manifest trip={trip} mode={mode} loadManifest={loadManifest} />
           <section className="op-card">
             <img className="op-trail-photo" src={`/trails/${trail.image}`} alt={trailName(trail)} />
             <div className="op-trail-body">
@@ -852,6 +992,7 @@ function ExpeditionDetail({ trip, mode, navigate, onStatus, onDelete, busy, erro
               </div>
             </div>
           </section>
+          </div>
 
           <div className="op-side">
             <section className="op-card pad">
@@ -879,7 +1020,7 @@ function ExpeditionDetail({ trip, mode, navigate, onStatus, onDelete, busy, erro
                   <dd>{currency(trip.price)}</dd>
                 </div>
                 <div>
-                  <dt>Reserved ({plural(trip.booked, "seat")})</dt>
+                  <dt>Booked ({plural(trip.booked, "seat")})</dt>
                   <dd>{currency(trip.booked * trip.price)}</dd>
                 </div>
                 <div className="total">
@@ -887,7 +1028,7 @@ function ExpeditionDetail({ trip, mode, navigate, onStatus, onDelete, busy, erro
                   <dd>{currency(trip.capacity * trip.price)}</dd>
                 </div>
               </dl>
-              <p className="op-small">Reserved seats are entered by hand in this activity. Payments aren't connected.</p>
+              <p className="op-small">Hikers book seats from Discover. Payments aren't connected in this activity.</p>
             </section>
 
             <section className="op-card pad">
@@ -911,7 +1052,12 @@ function ExpeditionDetail({ trip, mode, navigate, onStatus, onDelete, busy, erro
               <button type="button" className="op-btn secondary" disabled={busy} onClick={() => setConfirm(null)}>
                 Keep it
               </button>
-              <button type="button" className="op-btn danger-solid" disabled={busy} onClick={() => onDelete(trip)}>
+              <button
+                type="button"
+                className="op-btn danger-solid"
+                disabled={busy || (mode === "database" && trip.booked > 0 && trip.status !== "Cancelled")}
+                onClick={() => onDelete(trip)}
+              >
                 {busy ? "Deleting…" : "Delete expedition"}
               </button>
             </>
@@ -923,7 +1069,8 @@ function ExpeditionDetail({ trip, mode, navigate, onStatus, onDelete, busy, erro
           </p>
           {trip.booked > 0 && trip.status !== "Cancelled" && (
             <p className="op-warning">
-              It has {plural(trip.booked, "reserved seat")}. Cancel the expedition instead to keep the record.
+              It has {plural(trip.booked, "booked seat")}, so it can't be deleted yet. Cancel the expedition first;
+              that cancels its bookings and keeps the record for those hikers.
             </p>
           )}
           {error && <p className="op-form-error" role="alert" style={{ marginTop: 0 }}>{error}</p>}
@@ -957,7 +1104,8 @@ function ExpeditionDetail({ trip, mode, navigate, onStatus, onDelete, busy, erro
           </p>
           {trip.booked > 0 && (
             <p className="op-warning">
-              It has {plural(trip.booked, "reserved seat")}. Let those hikers know before you cancel.
+              This also cancels {plural(trip.booked, "booked seat")}. Those hikers will see the trip as cancelled by
+              you.
             </p>
           )}
           {error && <p className="op-form-error" role="alert" style={{ marginTop: 0 }}>{error}</p>}
@@ -1134,7 +1282,7 @@ function ExpeditionForm({ trip, initialTrail, user, navigate, onSave, busy, erro
             <Section
               icon={CalendarDays}
               title="Schedule and seats"
-              description="Reserved seats can never be more than the group's capacity."
+              description="Hikers book these seats from Discover. AkyatPH never lets a trip overbook."
               step={2}
             >
               <div className="op-fields-2">
@@ -1161,32 +1309,22 @@ function ExpeditionForm({ trip, initialTrail, user, navigate, onSave, busy, erro
                     ))}
                   </select>
                 </Field>
-                <Field label="Seats" id="field-capacity">
+                <Field
+                  label="Seats"
+                  id="field-capacity"
+                  hint={booked > 0 ? `${plural(booked, "seat")} already booked, so it can't go lower.` : undefined}
+                >
                   <input
                     id="field-capacity"
                     name="capacity"
                     className="op-input"
+                    aria-describedby={booked > 0 ? "field-capacity-hint" : undefined}
                     type="number"
                     required
                     min={Math.max(1, booked)}
                     max="500"
                     step="1"
                     value={form.capacity}
-                    onChange={number}
-                  />
-                </Field>
-                <Field label="Reserved seats" id="field-booked" hint="Entered by hand in this activity.">
-                  <input
-                    id="field-booked"
-                    name="booked"
-                    className="op-input"
-                    aria-describedby="field-booked-hint"
-                    type="number"
-                    required
-                    min="0"
-                    max={capacity || undefined}
-                    step="1"
-                    value={form.booked}
                     onChange={number}
                   />
                 </Field>

@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { BadgeCheck, CircleAlert, FileCheck2, MapPin, Mountain } from "lucide-react";
+import { BadgeCheck, CircleAlert, FileCheck2, Footprints, MapPin, Mountain, Tent } from "lucide-react";
 import "./auth.css";
 
-export function Auth({ onBack, onSubmit, onForgot, onReset, onGoogle, busy, error, notice, resetToken }) {
+export function Auth({ onBack, onSubmit, onForgot, onReset, onGoogle, busy, error, notice, resetToken, initialRole = "hiker" }) {
   const [mode, setMode] = useState(resetToken ? "reset" : "signin");
+  const [role, setRole] = useState(initialRole);
+  const operator = role === "operator";
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const signup = mode === "signup";
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -37,14 +39,18 @@ export function Auth({ onBack, onSubmit, onForgot, onReset, onGoogle, busy, erro
           </section>
           <section className="auth-form-panel" aria-label="Account access">
             <div className="auth-form-inner">
-              <div className="auth-heading"><h1>{mode === "forgot" ? "Reset your password." : mode === "reset" ? "Choose a new password." : signup ? "Create your account." : "Welcome back."}</h1><p>{mode === "forgot" ? "Enter your account email. For this local activity, the reset link appears in the API terminal." : mode === "reset" ? "Your new password must have at least 8 characters." : signup ? "Save trails, book guided climbs, and keep every trip detail together." : "Sign in to manage your climbs, bookings, and permit updates."}</p></div>
+              <div className="auth-heading"><h1>{mode === "forgot" ? "Reset your password." : mode === "reset" ? "Choose a new password." : signup ? (operator ? "Create your operator account." : "Create your account.") : "Welcome back."}</h1><p>{mode === "forgot" ? "Enter your account email. For this local activity, the reset link appears in the API terminal." : mode === "reset" ? "Your new password must have at least 8 characters." : signup ? (operator ? "Publish your departures and see hikers' bookings land in your operator portal." : "Book guided climbs and keep every trip detail together.") : "Sign in to book climbs, or to manage your trips as an operator."}</p></div>
               {(mode === "signin" || signup) && <div className="auth-tabs" role="group" aria-label="Choose an account action">
                 <button type="button" aria-pressed={!signup} className={!signup ? "active" : ""} onClick={() => setMode("signin")}>Sign in</button>
                 <button type="button" aria-pressed={signup} className={signup ? "active" : ""} onClick={() => setMode("signup")}>Create account</button>
               </div>}
-              {(mode === "signin" || signup) && <><button type="button" className="auth-google" onClick={onGoogle}><GoogleMark />Continue with Google</button><div className="auth-divider">or with email</div></>}
-              <form onSubmit={(event) => { event.preventDefault(); if (mode === "forgot") onForgot(form.email); else if (mode === "reset") onReset(resetToken, form.password); else onSubmit(form, signup); }}>
-                {signup && <div className="auth-field"><label htmlFor="auth-name">Full name</label><input id="auth-name" name="name" autoComplete="name" value={form.name} onChange={update} maxLength={80} required /></div>}
+              {(mode === "signin" || signup) && <><button type="button" className="auth-google" onClick={() => onGoogle(role)}><GoogleMark />Continue with Google</button><div className="auth-divider">or with email</div></>}
+              <form onSubmit={(event) => { event.preventDefault(); if (mode === "forgot") onForgot(form.email); else if (mode === "reset") onReset(resetToken, form.password); else onSubmit(signup ? { ...form, role } : { email: form.email, password: form.password }, signup); }}>
+                {signup && <fieldset className="auth-roles"><legend>I want to</legend>
+                  <label className={!operator ? "active" : ""}><input type="radio" name="role" value="hiker" checked={!operator} onChange={() => setRole("hiker")} /><Footprints size={18} aria-hidden="true" /><span><strong>Book climbs</strong><small>Hiker account</small></span></label>
+                  <label className={operator ? "active" : ""}><input type="radio" name="role" value="operator" checked={operator} onChange={() => setRole("operator")} /><Tent size={18} aria-hidden="true" /><span><strong>Run tours</strong><small>Operator account</small></span></label>
+                </fieldset>}
+                {signup && <div className="auth-field"><label htmlFor="auth-name">{operator ? "Your name" : "Full name"}</label><input id="auth-name" name="name" autoComplete="name" value={form.name} onChange={update} maxLength={80} required /></div>}
                 {mode !== "reset" && <div className="auth-field"><label htmlFor="auth-email">Email address</label><input id="auth-email" name="email" type="email" autoComplete="email" autoCapitalize="none" spellCheck={false} value={form.email} onChange={update} maxLength={254} required /></div>}
                 {mode !== "forgot" && <div className="auth-field"><div className="auth-field-heading"><label htmlFor="auth-password">{mode === "reset" ? "New password" : "Password"}</label>{mode === "signin" && <button type="button" onClick={() => setMode("forgot")}>Forgot password?</button>}</div><input id="auth-password" name="password" type="password" autoComplete={signup || mode === "reset" ? "new-password" : "current-password"} value={form.password} onChange={update} minLength={8} maxLength={128} required />{(signup || mode === "reset") && <span className="auth-hint">Use at least 8 characters.</span>}</div>}
                 {error && <p className="auth-error" role="alert"><CircleAlert size={16} aria-hidden="true" />{error}</p>}

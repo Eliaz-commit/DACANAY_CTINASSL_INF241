@@ -46,3 +46,32 @@ export function validateTrip(input) {
     throw new Error("Choose a valid duration.");
   return { ...trip, date: input.date, status: input.status, duration: input.duration };
 }
+
+export const MAX_PARTY = 10;
+
+/** A hiker's booking request: which trip, and the full name of everyone climbing. */
+export function validateBooking(input) {
+  if (!input || typeof input !== "object" || Array.isArray(input))
+    throw new Error("A booking object is required.");
+  if (typeof input.tripId !== "string" || !/^[a-f0-9]{24}$/.test(input.tripId))
+    throw new Error("Choose a trip to book.");
+  if (!Array.isArray(input.hikers) || input.hikers.length < 1 || input.hikers.length > MAX_PARTY)
+    throw new Error(`Book between 1 and ${MAX_PARTY} hikers at a time.`);
+  const hikers = input.hikers.map((name) => (typeof name === "string" ? name.trim().replace(/\s+/g, " ") : ""));
+  if (hikers.some((name) => !name || name.length > 80))
+    throw new Error("Enter each hiker's full name (up to 80 characters).");
+  return { tripId: input.tripId, hikers, seats: hikers.length };
+}
+
+const DURATION_DAYS = { "Day hike": 1, "2 days / 1 night": 2, "3 days / 2 nights": 3 };
+
+/** YYYY-MM-DD plus some days. */
+export const addDays = (date, days) =>
+  new Date(Date.parse(`${date}T00:00:00Z`) + days * 86400000).toISOString().slice(0, 10);
+
+/** Last day of a trip, from its start date and duration. */
+export const tripEndDate = (date, duration) => addDays(date, (DURATION_DAYS[duration] ?? 1) - 1);
+
+/** Today in Manila, as YYYY-MM-DD. */
+export const manilaToday = () =>
+  new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Manila" }).format(new Date());

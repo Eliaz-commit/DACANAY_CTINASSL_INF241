@@ -4,6 +4,12 @@ import { promisify } from "node:util";
 const scrypt = promisify(scryptCallback);
 export const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/** Hikers book trips; operators run them. Like the capstone, a new account is a hiker unless it says otherwise. */
+export const ROLES = ["hiker", "operator"];
+
+/** Accounts made before roles existed were all operator accounts. */
+export const roleOf = (user) => (ROLES.includes(user?.role) ? user.role : "operator");
+
 export function validateCredentials(input, signup = false) {
   if (!input || typeof input !== "object" || Array.isArray(input))
     throw new Error("Enter your email and password.");
@@ -14,7 +20,9 @@ export function validateCredentials(input, signup = false) {
   if (typeof password !== "string" || password.length < 8 || password.length > 128)
     throw new Error("Password must be 8 to 128 characters.");
   if (signup && (!name || name.length > 80)) throw new Error("Enter a name up to 80 characters.");
-  return { email, password, ...(signup ? { name } : {}) };
+  const role = input.role ?? "hiker";
+  if (signup && !ROLES.includes(role)) throw new Error("Choose a hiker or operator account.");
+  return { email, password, ...(signup ? { name, role } : {}) };
 }
 
 export async function hashPassword(password) {

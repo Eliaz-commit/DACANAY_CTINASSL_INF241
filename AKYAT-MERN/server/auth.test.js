@@ -1,10 +1,20 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { hashPassword, tokenHash, validateCredentials, verifyPassword } from "./auth.js";
+import { hashPassword, roleOf, tokenHash, validateCredentials, verifyPassword } from "./auth.js";
 
 test("signup normalizes email and validates fields", () => {
-  assert.deepEqual(validateCredentials({ name: "  Eli  ", email: " ELI@Example.com ", password: "password123" }, true), { name: "Eli", email: "eli@example.com", password: "password123" });
+  assert.deepEqual(validateCredentials({ name: "  Eli  ", email: " ELI@Example.com ", password: "password123" }, true), { name: "Eli", email: "eli@example.com", password: "password123", role: "hiker" });
   assert.throws(() => validateCredentials({ name: "", email: "bad", password: "short" }, true));
+});
+test("signup accepts hiker and operator accounts only", () => {
+  const base = { name: "Eli", email: "eli@example.com", password: "password123" };
+  assert.equal(validateCredentials({ ...base, role: "operator" }, true).role, "operator");
+  assert.throws(() => validateCredentials({ ...base, role: "admin" }, true));
+  assert.equal(validateCredentials({ ...base, role: "admin" }).role, undefined);
+});
+test("accounts from before roles existed are operators", () => {
+  assert.equal(roleOf({}), "operator");
+  assert.equal(roleOf({ role: "hiker" }), "hiker");
 });
 test("password hashes verify without storing plaintext", async () => {
   const hash = await hashPassword("password123");

@@ -88,7 +88,7 @@ const catalog = [
   },
 ];
 const heights = { low: [0, 1000], mid: [1000, 2000], high: [2000, Infinity] };
-export function Discover({ trips, onOperator, onSignIn, onTrip, user }) {
+export function Discover({ header, trips, onOperator, onTrail }) {
   const [query, setQuery] = useState("");
   const [province, setProvince] = useState("");
   const [difficulty, setDifficulty] = useState("");
@@ -110,21 +110,7 @@ export function Discover({ trips, onOperator, onSignIn, onTrip, user }) {
   const tripFor = (index) => upcomingFor(index)[0];
   return (
     <div className="discover-page">
-      <header className="discover-header">
-        <div className="discover-header-inner">
-          <a href="#top" className="discover-brand">
-            <span>
-              <Mountain size={22} />
-            </span>
-            AkyatPH
-          </a>
-          <nav aria-label="Site navigation">
-            <a href="#trails">Discover</a>
-            <button onClick={onOperator}>For operators</button>
-            <button className="discover-sign-in" onClick={onSignIn}>{user ? "My account" : "Sign in"}</button>
-          </nav>
-        </div>
-      </header>
+      {header}
       <section className="discover-hero" id="top">
         <img
           src="/trails/mt-pulag-ambangeg.jpg"
@@ -270,7 +256,7 @@ export function Discover({ trips, onOperator, onSignIn, onTrip, user }) {
                         <CalendarDays size={16} />
                         {departure ? dateLabel(departure.date) : "New dates soon"}
                       </span>
-                      <button onClick={() => setSelected(t)}>
+                      <button onClick={() => (t.trail == null ? setSelected(t) : onTrail(t.trail))}>
                         View trail <span aria-hidden="true">→</span>
                       </button>
                     </div>
@@ -299,9 +285,9 @@ export function Discover({ trips, onOperator, onSignIn, onTrip, user }) {
         <div className="discover-operator">
           <div>
             <h2>Organising a climb?</h2>
-            <p>Plan departures and manage your trip details in the operator workspace.</p>
+            <p>Publish departures, watch bookings land, and keep every trip detail in the operator portal.</p>
           </div>
-          <button onClick={onOperator}>Open operator workspace</button>
+          <button onClick={onOperator}>Open the operator portal</button>
         </div>
       </main>
       <footer className="discover-footer">
@@ -337,7 +323,7 @@ export function Discover({ trips, onOperator, onSignIn, onTrip, user }) {
               <p>{selected.description}</p>
               <h3>Scheduled trips</h3>
               {upcomingFor(selected.trail).map((t) => (
-                  <button className="discover-departure" key={t.id} onClick={() => onTrip(t)}>
+                  <button className="discover-departure" key={t.id} onClick={() => onTrail(t.trail)}>
                     <span>
                       <strong>{dateLabel(t.date)}</strong>
                       <small>

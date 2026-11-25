@@ -1,47 +1,350 @@
 {
-  "info": {
-    "name": "AKYAT MERN Activity — Auth and Trip CRUD",
-    "description": "Run signup, login, then trip CRUD in order. Change the email before re-running signup. MongoDB and npm run server must be running.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+ "info": {
+  "name": "AKYAT MERN Activity — Accounts, Trips, and Bookings",
+  "description": "Run the requests in order. Change email and hikerEmail to unused addresses before re-running the sign-ups, and set password. MongoDB and npm run server must be running.",
+  "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+ },
+ "variable": [
+  {
+   "key": "baseUrl",
+   "value": "http://127.0.0.1:4100"
   },
-  "variable": [
-    { "key": "baseUrl", "value": "http://127.0.0.1:4100" },
-    { "key": "email", "value": "student@example.com" },
-    { "key": "password", "value": "" },
-    { "key": "token", "value": "" },
-    { "key": "tripId", "value": "" }
-  ],
-  "item": [
-    {
-      "name": "1. POST Sign up",
-      "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Elijah Ashby Dacanay\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}" }, "url": "{{baseUrl}}/api/auth/signup" },
-      "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) pm.collectionVariables.set('token', pm.response.json().token);"] } }]
-    },
-    {
-      "name": "2. POST Log in",
-      "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}" }, "url": "{{baseUrl}}/api/auth/login" },
-      "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) pm.collectionVariables.set('token', pm.response.json().token);"] } }]
-    },
-    {
-      "name": "3. GET My trips",
-      "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "url": "{{baseUrl}}/api/trips" }
-    },
-    {
-      "name": "4. POST Create trip",
-      "request": { "method": "POST", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Mt. Pulag Sunrise Hike\",\n  \"trail\": 0,\n  \"date\": \"2027-01-15\",\n  \"duration\": \"Day hike\",\n  \"price\": 1500,\n  \"capacity\": 12,\n  \"booked\": 0,\n  \"status\": \"Open\",\n  \"meeting\": \"Baguio City\",\n  \"notes\": \"Bring a jacket.\"\n}" }, "url": "{{baseUrl}}/api/trips" },
-      "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 201) pm.collectionVariables.set('tripId', pm.response.json().id);"] } }]
-    },
-    {
-      "name": "5. PUT Update trip",
-      "request": { "method": "PUT", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"title\": \"Mt. Pulag Sunrise Hike - Updated\",\n  \"trail\": 0,\n  \"date\": \"2027-01-15\",\n  \"duration\": \"Day hike\",\n  \"price\": 1700,\n  \"capacity\": 15,\n  \"booked\": 0,\n  \"status\": \"Open\",\n  \"meeting\": \"Baguio City\",\n  \"notes\": \"Bring a jacket and water.\"\n}" }, "url": "{{baseUrl}}/api/trips/{{tripId}}" }
-    },
-    {
-      "name": "6. DELETE Trip",
-      "request": { "method": "DELETE", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "url": "{{baseUrl}}/api/trips/{{tripId}}" }
-    },
-    {
-      "name": "7. GET My trips after deletion",
-      "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }, "url": "{{baseUrl}}/api/trips" }
+  {
+   "key": "email",
+   "value": "student@example.com"
+  },
+  {
+   "key": "password",
+   "value": ""
+  },
+  {
+   "key": "token",
+   "value": ""
+  },
+  {
+   "key": "tripId",
+   "value": ""
+  },
+  {
+   "key": "hikerEmail",
+   "value": "hiker@example.com"
+  },
+  {
+   "key": "hikerToken",
+   "value": ""
+  },
+  {
+   "key": "bookingId",
+   "value": ""
+  }
+ ],
+ "item": [
+  {
+   "name": "1. POST Sign up (operator)",
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "url": "{{baseUrl}}/api/auth/signup",
+    "body": {
+     "mode": "raw",
+     "raw": "{\n  \"name\": \"Elijah Ashby Dacanay\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"role\": \"operator\"\n}"
     }
-  ]
+   },
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "exec": [
+       "if (pm.response.code === 201) pm.collectionVariables.set('token', pm.response.json().token);"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "2. POST Log in (operator)",
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "url": "{{baseUrl}}/api/auth/login",
+    "body": {
+     "mode": "raw",
+     "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+    }
+   },
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "exec": [
+       "if (pm.response.code === 200) pm.collectionVariables.set('token', pm.response.json().token);"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "3. GET My trips",
+   "request": {
+    "method": "GET",
+    "header": [],
+    "url": "{{baseUrl}}/api/trips",
+    "auth": {
+     "type": "bearer",
+     "bearer": [
+      {
+       "key": "token",
+       "value": "{{token}}",
+       "type": "string"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "4. POST Create trip",
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "url": "{{baseUrl}}/api/trips",
+    "auth": {
+     "type": "bearer",
+     "bearer": [
+      {
+       "key": "token",
+       "value": "{{token}}",
+       "type": "string"
+      }
+     ]
+    },
+    "body": {
+     "mode": "raw",
+     "raw": "{\n  \"title\": \"Mt. Pulag Sunrise Hike\",\n  \"trail\": 0,\n  \"date\": \"2027-01-15\",\n  \"duration\": \"Day hike\",\n  \"price\": 1500,\n  \"capacity\": 12,\n  \"status\": \"Open\",\n  \"meeting\": \"Baguio City\",\n  \"notes\": \"Bring a jacket.\"\n}"
+    }
+   },
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "exec": [
+       "if (pm.response.code === 201) pm.collectionVariables.set('tripId', pm.response.json().id);"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "5. PUT Update trip",
+   "request": {
+    "method": "PUT",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "url": "{{baseUrl}}/api/trips/{{tripId}}",
+    "auth": {
+     "type": "bearer",
+     "bearer": [
+      {
+       "key": "token",
+       "value": "{{token}}",
+       "type": "string"
+      }
+     ]
+    },
+    "body": {
+     "mode": "raw",
+     "raw": "{\n  \"title\": \"Mt. Pulag Sunrise Hike - Updated\",\n  \"trail\": 0,\n  \"date\": \"2027-01-15\",\n  \"duration\": \"Day hike\",\n  \"price\": 1700,\n  \"capacity\": 15,\n  \"status\": \"Open\",\n  \"meeting\": \"Baguio City\",\n  \"notes\": \"Bring a jacket and water.\"\n}"
+    }
+   }
+  },
+  {
+   "name": "6. POST Sign up (hiker)",
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "url": "{{baseUrl}}/api/auth/signup",
+    "body": {
+     "mode": "raw",
+     "raw": "{\n  \"name\": \"Bea Ramirez\",\n  \"email\": \"{{hikerEmail}}\",\n  \"password\": \"{{password}}\",\n  \"role\": \"hiker\"\n}"
+    }
+   },
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "exec": [
+       "if (pm.response.code === 201) pm.collectionVariables.set('hikerToken', pm.response.json().token);"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "7. GET Open trips (public)",
+   "request": {
+    "method": "GET",
+    "header": [],
+    "url": "{{baseUrl}}/api/expeditions"
+   }
+  },
+  {
+   "name": "8. POST Book the trip (hiker)",
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "url": "{{baseUrl}}/api/bookings",
+    "auth": {
+     "type": "bearer",
+     "bearer": [
+      {
+       "key": "token",
+       "value": "{{hikerToken}}",
+       "type": "string"
+      }
+     ]
+    },
+    "body": {
+     "mode": "raw",
+     "raw": "{\n  \"tripId\": \"{{tripId}}\",\n  \"hikers\": [\n    \"Bea Ramirez\",\n    \"Ana Ramirez\"\n  ]\n}"
+    }
+   },
+   "event": [
+    {
+     "listen": "test",
+     "script": {
+      "exec": [
+       "if (pm.response.code === 201) pm.collectionVariables.set('bookingId', pm.response.json().id);"
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "9. GET My bookings (hiker)",
+   "request": {
+    "method": "GET",
+    "header": [],
+    "url": "{{baseUrl}}/api/bookings",
+    "auth": {
+     "type": "bearer",
+     "bearer": [
+      {
+       "key": "token",
+       "value": "{{hikerToken}}",
+       "type": "string"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "10. GET Trip manifest (operator)",
+   "request": {
+    "method": "GET",
+    "header": [],
+    "url": "{{baseUrl}}/api/trips/{{tripId}}/bookings",
+    "auth": {
+     "type": "bearer",
+     "bearer": [
+      {
+       "key": "token",
+       "value": "{{token}}",
+       "type": "string"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "11. POST Cancel booking (hiker)",
+   "request": {
+    "method": "POST",
+    "header": [
+     {
+      "key": "Content-Type",
+      "value": "application/json"
+     }
+    ],
+    "url": "{{baseUrl}}/api/bookings/{{bookingId}}/cancel",
+    "auth": {
+     "type": "bearer",
+     "bearer": [
+      {
+       "key": "token",
+       "value": "{{hikerToken}}",
+       "type": "string"
+      }
+     ]
+    },
+    "body": {
+     "mode": "raw",
+     "raw": "{}"
+    }
+   }
+  },
+  {
+   "name": "12. DELETE Trip",
+   "request": {
+    "method": "DELETE",
+    "header": [],
+    "url": "{{baseUrl}}/api/trips/{{tripId}}",
+    "auth": {
+     "type": "bearer",
+     "bearer": [
+      {
+       "key": "token",
+       "value": "{{token}}",
+       "type": "string"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "name": "13. GET My trips after deletion",
+   "request": {
+    "method": "GET",
+    "header": [],
+    "url": "{{baseUrl}}/api/trips",
+    "auth": {
+     "type": "bearer",
+     "bearer": [
+      {
+       "key": "token",
+       "value": "{{token}}",
+       "type": "string"
+      }
+     ]
+    }
+   }
+  }
+ ]
 }
